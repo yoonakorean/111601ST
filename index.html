@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>15-1 句子聽打挑戰</title>
+<title>16-1 句子聽打挑戰</title>
 <style>
 body { font-family: sans-serif; max-width: 600px; margin: auto; text-align: center; padding: 30px 15px; }
 #logo, #logo-game { width: 150px; max-width: 80%; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto; }
@@ -56,16 +56,16 @@ if (password !== "1231") { alert("密碼錯誤，無法進入！"); window.locat
 
 <script>
 const questions = [
-{ audio: "11150101S.mp3", answer: "백화점에 갑니다.", chinese: "去百貨公司。" },
-{ audio: "11150102S.mp3", answer: "우체국에 갑니다.", chinese: "去郵局。" },
-{ audio: "11150103S.mp3", answer: "집에 옵니다.", chinese: "回來家。" },
-{ audio: "11150104S.mp3", answer: "기숙사에 옵니까?", chinese: "回來宿舍嗎？" },
-{ audio: "11150105S.mp3", answer: "도서관에 갑니다.", chinese: "去圖書館。" },
-{ audio: "11150106S.mp3", answer: "은행에 갑니까?", chinese: "去銀行嗎？" },
-{ audio: "11150107S.mp3", answer: "편의점에 갑니다.", chinese: "去便利商店。" },
-{ audio: "11150108S.mp3", answer: "서점에 갑니다.", chinese: "去書店。" },
-{ audio: "11150109S.mp3", answer: "노래방에 갑니다.", chinese: "去KTV。" },
-{ audio: "11150110S.mp3", answer: "박물관에 옵니다.", chinese: "去博物館。" }
+{ audio: "11160101S.mp3", answer: "우리 집에 오세요.", chinese: "請來我們家。" },
+  { audio: "11160102S.mp3", answer: "이름을 쓰세요.", chinese: "請寫名字。" },
+  { audio: "11160103S.mp3", answer: "창문을 여세요.", chinese: "請開窗戶。" },
+  { audio: "11160104S.mp3", answer: "천천히 드세요.", chinese: "請慢慢吃。" },
+  { audio: "11160105S.mp3", answer: "앉으세요.", chinese: "請坐。" },
+  { audio: "11160106S.mp3", answer: "가지 마세요.", chinese: "請不要走。" },
+  { audio: "11160107S.mp3", answer: "말하지 마세요.", chinese: "請不要說。" },
+  { audio: "11160108S.mp3", answer: "문을 닫지 마세요.", chinese: "請不要關門。" },
+  { audio: "11160109S.mp3", answer: "많이 마시지 마세요.", chinese: "請不要喝太多。" },
+  { audio: "11160110S.mp3", answer: "만지지 마세요.", chinese: "請不要摸。" }
 ];
 
 const modeSelectDiv = document.getElementById("mode-select");
@@ -100,17 +100,15 @@ let currentMode = null;
 let startTime = null; // 記錄挑戰開始時間
 
 // 顯示標題與送表單標題
-const displayTitle = "15-1 句子聽打挑戰";
-const fullTitle = "11-15-1 句子聽打挑戰";
+const displayTitle = "16-1 句子聽打挑戰";
+const fullTitle = "11-16-1 句子聽打挑戰";
 
 function shuffle(array){for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]];}return array;}
-// 抽六題
 
 function getSixQuestions(){
-
   return shuffle([...questions]).slice(0,6);
-
 }
+
 function showModeSelect(){
   modeSelectDiv.style.display="block";
   gameAreaDiv.classList.add("hidden");
@@ -124,20 +122,21 @@ function showGameArea(){
   nicknameSection.classList.add("hidden");
   timerDiv.style.display=currentMode==="challenge"?"block":"none";
   submitBtn.disabled=true;
-  gameTitle.textContent = displayTitle; // 顯示給玩家的標題
+  submitBtn.textContent="提交成績";
+  gameTitle.textContent = displayTitle; 
   if(currentMode==="challenge"){
     timeLeft=shuffledQuestions.length*30;
     timerDiv.textContent=`剩餘時間：${timeLeft} 秒`;
   } else {
     timerDiv.textContent="";
   }
-  startTime = Date.now(); // 開始挑戰時間
+  startTime = Date.now(); 
 }
 
 function resetGameVars(){
   clearInterval(timer); timer=null; timerStarted=false; timeLeft=0;
   current=0; correct=0; finalScore=0;
-  submitBtn.disabled=true; answerInput.value=""; answerInput.disabled=false;
+  submitBtn.disabled=true; submitBtn.textContent="提交成績"; answerInput.value=""; answerInput.disabled=false;
   checkBtn.disabled=true; nextBtn.style.display="none"; resultDiv.innerHTML="";
   questionNumberDiv.textContent=""; timerDiv.textContent="";
 }
@@ -150,11 +149,12 @@ function loadQuestion(){
   questionNumberDiv.textContent=`第 ${current+1} 題 / 共 ${shuffledQuestions.length} 題`;
   audioEl.style.display="block"; answerInput.style.display="block"; checkBtn.style.display="block"; nextBtn.style.display="none"; questionNumberDiv.style.display="block"; resultDiv.style.display="block";
   answerInput.value=""; answerInput.disabled=false; checkBtn.disabled=true; resultDiv.innerHTML="";
+  answerInput.focus();
 }
 
 function startTimer(){
   if(timerStarted||currentMode==="practice")return;
-  timerStarted=true; if(timeLeft<=0)timeLeft=shuffledQuestions.length*10;
+  timerStarted=true; if(timeLeft<=0)timeLeft=shuffledQuestions.length*30;
   timer=setInterval(()=>{
     timeLeft--;
     timerDiv.textContent=`剩餘時間：${timeLeft} 秒`;
@@ -169,6 +169,17 @@ answerInput.addEventListener("input",()=>{checkBtn.disabled=answerInput.value.tr
 audioEl.addEventListener("play",()=>{if(currentMode==="challenge"&&!timerStarted) startTimer();});
 answerInput.addEventListener("focus",()=>{if(currentMode==="challenge"&&!timerStarted) startTimer();});
 
+// 支援 Enter 鍵送出或跳下一題
+answerInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    if (!checkBtn.disabled && checkBtn.style.display !== "none") {
+      checkBtn.click();
+    } else if (nextBtn.style.display !== "none") {
+      nextBtn.click();
+    }
+  }
+});
+
 checkBtn.addEventListener("click",()=>{
   const userAns=answerInput.value.trim();
   const q=shuffledQuestions[current];
@@ -176,6 +187,7 @@ checkBtn.addEventListener("click",()=>{
   if(userAns===correctAns){resultDiv.innerHTML=`✅ 答對了🎉 你真棒👍🏻<br>📘 中文：<strong>${q.chinese}</strong>`; correct++;}
   else{resultDiv.innerHTML=`❌ 錯誤。正確答案是：<strong>${correctAns}</strong><br>📘 中文：<strong>${q.chinese}</strong>`;}
   answerInput.disabled=true; checkBtn.disabled=true; nextBtn.style.display="block"; resultDiv.style.display="block";
+  nextBtn.focus();
 });
 
 nextBtn.addEventListener("click",()=>{current++; if(current<shuffledQuestions.length){loadQuestion();} else {endGame();}});
@@ -202,7 +214,12 @@ function endGame(){
 submitBtn.addEventListener("click",()=>{
   const nickname=nicknameInput.value.trim();
   if(!nickname||finalScore<80)return;
-  const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000); // 花費時間秒數
+
+  // 防止重複發送
+  submitBtn.disabled = true;
+  submitBtn.textContent = "傳送中...";
+
+  const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000); 
   const weekdayNames=["日","一","二","三","四","五","六"];
   const weekday=weekdayNames[new Date().getDay()];
   
@@ -210,13 +227,20 @@ submitBtn.addEventListener("click",()=>{
   const formData=new FormData();
   formData.append("entry.1082970818",nickname);
   formData.append("entry.851626887",finalScore);
-  formData.append("entry.498226528",elapsedSeconds + " 秒"); // 回傳花費秒數
+  formData.append("entry.498226528",elapsedSeconds + " 秒");
   formData.append("entry.532888754",weekday);
-  formData.append("entry.1110600272",fullTitle); // 使用完整標題回傳表單
+  formData.append("entry.1110600272",fullTitle);
   
   fetch(formURL,{method:"POST",body:formData,mode:"no-cors"})
-    .then(()=>alert("成績已送出，謝謝！"))
-    .catch(()=>alert("無法送出成績，請稍後再試。"));
+    .then(()=>{
+      alert("成績已送出，謝謝！");
+      submitBtn.textContent = "已成功送出";
+    })
+    .catch(()=>{
+      alert("無法送出成績，請稍後再試。");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "重新提交成績";
+    });
 });
 
 restartBtn.addEventListener("click",()=>{resetGameVars(); shuffledQuestions=getSixQuestions(); showGameArea(); loadQuestion();});
