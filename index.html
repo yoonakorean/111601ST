@@ -56,7 +56,7 @@ if (password !== "1231") { alert("密碼錯誤，無法進入！"); window.locat
 
 <script>
 const questions = [
-{ audio: "11160101S.mp3", answer: "우리 집에 오세요.", chinese: "請來我們家。" },
+  { audio: "11160101S.mp3", answer: "우리 집에 오세요.", chinese: "請來我們家。" },
   { audio: "11160102S.mp3", answer: "이름을 쓰세요.", chinese: "請寫名字。" },
   { audio: "11160103S.mp3", answer: "창문을 여세요.", chinese: "請開窗戶。" },
   { audio: "11160104S.mp3", answer: "천천히 드세요.", chinese: "請慢慢吃。" },
@@ -97,7 +97,7 @@ let timer = null;
 let timeLeft = 0;
 let timerStarted = false;
 let currentMode = null;
-let startTime = null; // 記錄挑戰開始時間
+let startTime = null;
 
 // 顯示標題與送表單標題
 const displayTitle = "16-1 句子聽打挑戰";
@@ -137,7 +137,7 @@ function resetGameVars(){
   clearInterval(timer); timer=null; timerStarted=false; timeLeft=0;
   current=0; correct=0; finalScore=0;
   submitBtn.disabled=true; submitBtn.textContent="提交成績"; answerInput.value=""; answerInput.disabled=false;
-  checkBtn.disabled=true; nextBtn.style.display="none"; resultDiv.innerHTML="";
+  checkBtn.disabled=true; checkBtn.style.display="inline-block"; nextBtn.style.display="none"; resultDiv.innerHTML="";
   questionNumberDiv.textContent=""; timerDiv.textContent="";
 }
 
@@ -147,7 +147,7 @@ function loadQuestion(){
   const q=shuffledQuestions[current];
   audioEl.src=q.audio;
   questionNumberDiv.textContent=`第 ${current+1} 題 / 共 ${shuffledQuestions.length} 題`;
-  audioEl.style.display="block"; answerInput.style.display="block"; checkBtn.style.display="block"; nextBtn.style.display="none"; questionNumberDiv.style.display="block"; resultDiv.style.display="block";
+  audioEl.style.display="block"; answerInput.style.display="block"; checkBtn.style.display="inline-block"; nextBtn.style.display="none"; questionNumberDiv.style.display="block"; resultDiv.style.display="block";
   answerInput.value=""; answerInput.disabled=false; checkBtn.disabled=true; resultDiv.innerHTML="";
   answerInput.focus();
 }
@@ -169,12 +169,15 @@ answerInput.addEventListener("input",()=>{checkBtn.disabled=answerInput.value.tr
 audioEl.addEventListener("play",()=>{if(currentMode==="challenge"&&!timerStarted) startTimer();});
 answerInput.addEventListener("focus",()=>{if(currentMode==="challenge"&&!timerStarted) startTimer();});
 
-// 支援 Enter 鍵送出或跳下一題
-answerInput.addEventListener("keydown", (e) => {
+// 修正後的 Enter 鍵處理邏輯
+window.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    if (!checkBtn.disabled && checkBtn.style.display !== "none") {
+    // 情況一：還沒核對答案，且確認按鈕可點擊
+    if (nextBtn.style.display === "none" && !checkBtn.disabled) {
       checkBtn.click();
-    } else if (nextBtn.style.display !== "none") {
+    } 
+    // 情況二：已經核對答案，顯示「下一題」按鈕
+    else if (nextBtn.style.display !== "none") {
       nextBtn.click();
     }
   }
@@ -186,8 +189,7 @@ checkBtn.addEventListener("click",()=>{
   const correctAns=q.answer.trim();
   if(userAns===correctAns){resultDiv.innerHTML=`✅ 答對了🎉 你真棒👍🏻<br>📘 中文：<strong>${q.chinese}</strong>`; correct++;}
   else{resultDiv.innerHTML=`❌ 錯誤。正確答案是：<strong>${correctAns}</strong><br>📘 中文：<strong>${q.chinese}</strong>`;}
-  answerInput.disabled=true; checkBtn.disabled=true; nextBtn.style.display="block"; resultDiv.style.display="block";
-  nextBtn.focus();
+  answerInput.disabled=true; checkBtn.disabled=true; checkBtn.style.display="none"; nextBtn.style.display="inline-block"; resultDiv.style.display="block";
 });
 
 nextBtn.addEventListener("click",()=>{current++; if(current<shuffledQuestions.length){loadQuestion();} else {endGame();}});
@@ -215,7 +217,6 @@ submitBtn.addEventListener("click",()=>{
   const nickname=nicknameInput.value.trim();
   if(!nickname||finalScore<80)return;
 
-  // 防止重複發送
   submitBtn.disabled = true;
   submitBtn.textContent = "傳送中...";
 
